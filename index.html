@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loopcode — Automatizuj. Škáluj. Dominuj.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent:        #00FF94;
+      --accent-dim:    rgba(0,255,148,.12);
+      --accent-glow:   rgba(0,255,148,.25);
+      --bg:            #0A0A0A;
+      --surface:       #111111;
+      --surface-2:     #181818;
+      --border:        #222222;
+      --border-lt:     #333333;
+      --txt:           #F0F0F0;
+      --txt-2:         #888888;
+      --txt-3:         #555555;
+      --amber:         #EF9F27;
+      --r-sm:          6px;
+      --r-md:          12px;
+      --r-lg:          16px;
+      --font:          'Space Grotesk', sans-serif;
+      --mono:          'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--txt);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ─── NOISE TEXTURE ─────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── DOT GRID ──────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,.045) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── SCROLLBAR ─────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+
+    /* ─── NAVBAR ────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 1.125rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: rgba(10,10,10,.72);
+      border-bottom: .5px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      border-radius: 7px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .logo-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--txt);
+      letter-spacing: -.02em;
+    }
+    .logo-text span { color: var(--accent); }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 11px;
+      border-radius: 4px;
+      font-weight: 500;
+      background: #0a2a1a;
+      color: var(--accent);
+      border: .5px solid rgba(0,255,148,.2);
+      letter-spacing: .04em;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .3; }
+    }
+
+    /* ─── HERO ──────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9rem 2rem 5rem;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .glow-main {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 700px;
+      background: radial-gradient(ellipse at center, rgba(0,255,148,.055) 0%, transparent 68%);
+      pointer-events: none;
+      animation: glow-breathe 5s ease-in-out infinite;
+    }
+    .glow-side {
+      position: absolute;
+      bottom: 5%;
+      right: 5%;
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse, rgba(239,159,39,.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    @keyframes glow-breathe {
+      0%,100% { opacity: 1;   transform: translateX(-50%) scale(1); }
+      50%      { opacity: .55; transform: translateX(-50%) scale(1.08); }
+    }
+
+    /* Floating decoration cards */
+    .deco-card {
+      position: absolute;
+      background: var(--surface);
+      border: .5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: .6rem .9rem;
+      font-size: 11px;
+      color: var(--txt-2);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      animation: float-in .6s ease forwards;
+    }
+    .deco-card .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .deco-card.d1 { top: 22%; right: 8%; animation-delay: 1.2s; }
+    .deco-card.d2 { top: 38%; right: 5%; animation-delay: 1.5s;
+      animation-name: float-in, float-loop; animation-duration: .6s, 5s; animation-delay: 1.2s, 1.8s; animation-fill-mode: forwards, none; animation-iteration-count: 1, infinite; }
+    .deco-card.d3 { top: 26%; left: 6%;  animation-delay: 1.7s; }
+    .deco-card.d4 { top: 52%; left: 4%;  animation-delay: 2s; }
+    @keyframes float-in {
+      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(12px); }
+    }
+    @keyframes float-loop {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+
+    /* Hero content */
+    .hero-content {
+      position: relative;
+      max-width: 780px;
+      width: 100%;
+      text-align: center;
+      z-index: 3;
+    }
+
+    .animate-in {
+      opacity: 0;
+      transform: translateY(22px);
+      animation: fade-up .75s ease forwards;
+    }
+    .animate-in:nth-child(1) { animation-delay: .1s; }
+    .animate-in:nth-child(2) { animation-delay: .22s; }
+    .animate-in:nth-child(3) { animation-delay: .37s; }
+    .animate-in:nth-child(4) { animation-delay: .52s; }
+    .animate-in:nth-child(5) { animation-delay: .67s; }
+    .animate-in:nth-child(6) { animation-delay: .82s; }
+    @keyframes fade-up {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--txt-3);
+      margin-bottom: 1.75rem;
+    }
+    .eyebrow::before,
+    .eyebrow::after {
+      content: '';
+      display: block;
+      width: 28px;
+      height: .5px;
+      background: var(--border-lt);
+    }
+
+    .hero-h1 {
+      font-size: clamp(40px, 7.5vw, 82px);
+      font-weight: 500;
+      letter-spacing: -.04em;
+      line-height: 1.04;
+      color: var(--txt);
+      margin-bottom: 1.5rem;
+    }
+    .hero-h1 .hi {
+      color: var(--accent);
+      position: relative;
+      display: inline-block;
+    }
+    .hero-h1 .hi::after {
+      content: '';
+      position: absolute;
+      bottom: 1px;
+      left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: .35;
+      border-radius: 2px;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--txt-2);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto 1.75rem;
+    }
+
+    .hero-code {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+      background: var(--surface);
+      border: .5px solid var(--border);
+      border-top-color: rgba(0,255,148,.15);
+      padding: 9px 18px;
+      border-radius: var(--r-sm);
+      display: inline-block;
+      margin-bottom: 2.5rem;
+      letter-spacing: 0;
+      opacity: .9;
+    }
+    .hero-code .c-gray  { color: var(--txt-3); }
+    .hero-code .c-white { color: var(--txt-2); }
+
+    .cta-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+    }
+
+    /* ─── BUTTONS ───────────────────────────────── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      letter-spacing: -.01em;
+      transition: transform .18s ease, box-shadow .18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.18) 50%, transparent 100%);
+      transform: translateX(-100%);
+      transition: transform .5s ease;
+    }
+    .btn-primary:hover::after  { transform: translateX(100%); }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px var(--accent-glow), 0 6px 24px rgba(0,255,148,.18);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--txt-2);
+      border: .5px solid var(--border-lt);
+      border-radius: var(--r-sm);
+      padding: 12px 22px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all .18s ease;
+    }
+    .btn-outline:hover {
+      color: var(--txt);
+      border-color: #555;
+      background: var(--surface);
+    }
+
+    .cta-note {
+      font-size: 14px;
+      color: var(--txt-2);
+      margin-top: -4px;
+      margin-bottom: 2rem;
+      letter-spacing: .01em;
+    }
+    .cta-note em {
+      font-style: normal;
+      color: var(--txt-2);
+    }
+
+    /* Stats strip */
+    .stats-strip {
+      display: flex;
+      justify-content: center;
+      border: .5px solid var(--border);
+      border-radius: var(--r-md);
+      background: rgba(17,17,17,.7);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .stat-item {
+      flex: 1;
+      padding: 1.125rem 1rem;
+      text-align: center;
+      border-right: .5px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-size: 21px;
+      font-weight: 500;
+      letter-spacing: -.02em;
+      color: var(--txt);
+      line-height: 1.2;
+    }
+    .stat-lbl {
+      font-size: 10px;
+      color: var(--txt-3);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-top: 2px;
+    }
+
+    /* ─── MODAL ─────────────────────────────────── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,4,4,.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .28s ease, visibility .28s ease;
+    }
+    .overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: .5px solid var(--border);
+      border-radius: var(--r-lg);
+      max-width: 600px;
+      width: 100%;
+      position: relative;
+      transform: scale(.94) translateY(24px);
+      transition: transform .32s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 0 0 1px var(--border), 0 32px 96px rgba(0,0,0,.7), 0 0 120px rgba(0,255,148,.04);
+      margin: auto;
+      overflow: hidden;
+    }
+    .overlay.open .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Top accent line */
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 12%; right: 12%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,255,148,.5), transparent);
+    }
+
+    .modal-header {
+      padding: 2rem 2rem 1.5rem;
+      border-bottom: .5px solid var(--border);
+    }
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-weight: 500;
+      background: #0a2a1a;
+      color: var(--accent);
+      border: .5px solid rgba(0,255,148,.2);
+      margin-bottom: 1rem;
+      letter-spacing: .04em;
+    }
+    .modal-badge .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 2s infinite;
+    }
+    .modal-title {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -.025em;
+      color: var(--txt);
+      margin-bottom: 8px;
+    }
+    .modal-desc {
+      font-size: 13.5px;
+      color: var(--txt-2);
+      line-height: 1.65;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 30px; height: 30px;
+      border-radius: var(--r-sm);
+      border: .5px solid var(--border);
+      background: transparent;
+      color: var(--txt-3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      line-height: 1;
+      transition: all .15s;
+      font-family: var(--font);
+    }
+    .modal-close:hover {
+      background: var(--surface-2);
+      color: var(--txt);
+      border-color: var(--border-lt);
+    }
+
+    /* Form */
+    .modal-form {
+      padding: 1.75rem 2rem;
+    }
+    .form-section { margin-bottom: 2rem; }
+    .form-section:last-child { margin-bottom: 0; }
+
+    .section-label {
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--txt-3);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: .5px;
+      background: var(--border);
+    }
+
+    .form-row { display: grid; gap: 12px; }
+    .form-row.c2 { grid-template-columns: 1fr 1fr; }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .form-label {
+      font-size: 12px;
+      color: var(--txt-2);
+      font-weight: 500;
+    }
+    .form-label .req { color: var(--accent); margin-left: 2px; }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      background: #0e0e0e;
+      border: .5px solid var(--border-lt);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--txt);
+      font-family: var(--font);
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: var(--txt-3); }
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 82px;
+      line-height: 1.6;
+    }
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    .form-select option { background: #111; }
+
+    /* Tool chips */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      padding: 5px 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: .5px solid var(--border-lt);
+      background: transparent;
+      color: var(--txt-3);
+      font-family: var(--font);
+      transition: all .14s;
+      user-select: none;
+    }
+    .chip:hover { border-color: rgba(0,255,148,.4); color: var(--txt-2); }
+    .chip.on {
+      background: #0a2a1a;
+      border-color: rgba(0,255,148,.35);
+      color: var(--accent);
+    }
+
+    /* Yes / No */
+    .yn {
+      display: flex;
+      gap: 8px;
+    }
+    .yn-btn {
+      flex: 1;
+      padding: 9px;
+      border-radius: var(--r-sm);
+      border: .5px solid var(--border-lt);
+      background: transparent;
+      color: var(--txt-3);
+      font-family: var(--font);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .14s;
+    }
+    .yn-btn.on {
+      background: #0a2a1a;
+      border-color: rgba(0,255,148,.35);
+      color: var(--accent);
+    }
+    .yn-btn:not(.on):hover { border-color: #444; color: var(--txt-2); }
+
+    /* Footer */
+    .modal-footer {
+      padding: 1.25rem 2rem 1.75rem;
+      border-top: .5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .footer-note {
+      font-size: 11px;
+      color: var(--txt-3);
+      line-height: 1.55;
+    }
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 11px 22px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all .18s;
+      letter-spacing: -.01em;
+    }
+    .btn-submit:hover {
+      box-shadow: 0 0 28px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+    .btn-submit:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Error highlight */
+    .form-input.err,
+    .form-textarea.err,
+    .form-select.err {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 3px rgba(239,68,68,.14) !important;
+    }
+    .err-msg {
+      font-size: 11px;
+      color: #ef4444;
+      display: none;
+    }
+    .form-input.err ~ .err-msg,
+    .form-textarea.err ~ .err-msg,
+    .form-select.err ~ .err-msg { display: block; }
+
+    /* Success */
+    .modal-success {
+      display: none;
+      padding: 3.5rem 2rem;
+      text-align: center;
+    }
+    .modal-success.show { display: block; }
+    .success-ring {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: #0a2a1a;
+      border: 1px solid rgba(0,255,148,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      animation: scale-in .4s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes scale-in {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .success-title {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -.025em;
+      margin-bottom: 10px;
+    }
+    .success-text {
+      font-size: 14px;
+      color: var(--txt-2);
+      line-height: 1.65;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    /* ─── RESPONSIVE ────────────────────────────── */
+    @media (max-width: 700px) {
+      nav { padding: 1rem 1.25rem; }
+      .hero { padding: 7.5rem 1.25rem 4rem; }
+      .deco-card { display: none; }
+      .form-row.c2 { grid-template-columns: 1fr; }
+      .modal-form,
+      .modal-header { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .modal-footer { flex-direction: column; align-items: stretch; padding: 1.25rem; }
+      .btn-submit { justify-content: center; }
+      .stats-strip { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ▸ NAVBAR ─────────────────────────────────────── -->
+<nav>
+  <a href="#" class="logo" aria-label="Loopcode — zpět na homepage">
+    <div class="logo-icon">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M9 3C5.686 3 3 5.686 3 9s2.686 6 6 6 6-2.686 6-6" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M12 6l3-3m0 0v3m0-3h-3" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="logo-text">loop<span>code</span></div>
+  </a>
+  <div class="live-badge">
+    <span class="live-dot"></span>
+    Zakládající tým — otevřeno
+  </div>
+</nav>
+
+<!-- ▸ HERO ───────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="glow-main" aria-hidden="true"></div>
+  <div class="glow-side"  aria-hidden="true"></div>
+
+  <!-- Floating deco cards (desktop only) -->
+  <div class="deco-card d1" aria-hidden="true">
+    <span class="dot" style="background:#00FF94"></span>
+    Automatizace — běží
+  </div>
+  <div class="deco-card d2" aria-hidden="true">
+    <span class="dot" style="background:#EF9F27"></span>
+    3 h / den ušetřeno
+  </div>
+  <div class="deco-card d3" aria-hidden="true">
+    <span class="dot" style="background:#00FF94"></span>
+    GPT-4o · Claude · n8n
+  </div>
+  <div class="deco-card d4" aria-hidden="true">
+    <span class="dot" style="background:#888"></span>
+    0 → produkce za 2 týdny
+  </div>
+
+  <div class="hero-content">
+    <div class="eyebrow animate-in">AI implementace · automatizace procesů · 2026</div>
+
+    <h1 class="hero-h1 animate-in">
+      Přestaň dělat ručně<br>
+      co může <span class="hi">běžet samo</span>
+    </h1>
+
+    <p class="hero-sub animate-in">
+      Loopcode staví AI systémy, které přebírají opakující se práci — ve firmě i v osobním životě. Žádné demo, žádné mockupy. Doopravdy fungující smyčky.
+    </p>
+
+    <div class="hero-code animate-in">
+      <span class="c-gray">const</span>
+      <span class="c-white"> result = </span>
+      <span style="color:var(--accent)">await</span>
+      <span class="c-white"> loopcode.automate(</span>yourProcess<span class="c-white">)</span>
+    </div>
+
+    <div class="cta-group animate-in">
+      <button class="btn-primary" id="openModal">
+        Chci být u toho od začátku ↗
+      </button>
+    </div>
+    <p class="cta-note animate-in">Nehledám zákazníky — hledám lidi, kteří chtějí projekt <em>spoluvytvářet</em>.</p>
+
+    <div class="stats-strip animate-in">
+      <div class="stat-item">
+        <div class="stat-num">AI first</div>
+        <div class="stat-lbl">přístup</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">&lt;&nbsp;5</div>
+        <div class="stat-lbl">míst</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0 → 1</div>
+        <div class="stat-lbl">fáze</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ▸ MODAL ──────────────────────────────────────── -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal">
+
+    <!-- Success state -->
+    <div class="modal-success" id="successState">
+      <div class="success-ring">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+          <path d="M5 13l6 6L21 7" stroke="#00FF94" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="success-title">Přihláška odeslána.</div>
+      <p class="success-text">Ozvu se do 48 hodin. Každý dostane osobní odpověď — nehledám CV, hledám lidi.</p>
+    </div>
+
+    <!-- Form content -->
+    <div id="formContent">
+      <div class="modal-header">
+        <button class="modal-close" id="closeModal" aria-label="Zavřít dialog">×</button>
+        <div class="modal-badge"><span class="dot"></span>Zakládající tým</div>
+        <h2 class="modal-title" id="modalTitle">Pojďme to rozjet spolu.</h2>
+        <p class="modal-desc">
+          Nehledám zaměstnance. Hledám lidi, kteří chtějí spoluvytvářet něco od základu — s vlastním pohledem a chutí se do toho dát naplno.
+        </p>
+      </div>
+
+      <form class="modal-form" id="signupForm" novalidate>
+
+        <!-- ① O tobě -->
+        <div class="form-section">
+          <div class="section-label">O tobě</div>
+          <div class="form-row c2" style="margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-label" for="f-name">Jméno <span class="req">*</span></label>
+              <input class="form-input" type="text" id="f-name" name="name" placeholder="Jan Novák" autocomplete="name" required>
+              <span class="err-msg">Vyplň prosím jméno.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-email">Email <span class="req">*</span></label>
+              <input class="form-input" type="email" id="f-email" name="email" placeholder="jan@firma.cz" autocomplete="email" required>
+              <span class="err-msg">Zadej platný email.</span>
+            </div>
+          </div>
+          <div class="form-row" style="margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-label" for="f-role">Aktuální role / kde působíš</label>
+              <input class="form-input" type="text" id="f-role" name="role" placeholder="Freelance dev, product manager ve XY, student, …">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="f-link">LinkedIn / GitHub / portfolio</label>
+              <input class="form-input" type="url" id="f-link" name="link" placeholder="https://…">
+            </div>
+          </div>
+        </div>
+
+        <!-- ② AI zkušenosti -->
+        <div class="form-section">
+          <div class="section-label">Zkušenosti s AI</div>
+          <div class="form-row" style="margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-label" for="f-level">Jak hodnotíš svou úroveň práce s AI? <span class="req">*</span></label>
+              <select class="form-select" id="f-level" name="level" required>
+                <option value="" disabled selected>Vyber úroveň…</option>
+                <option value="beginner">Začátečník — používám ChatGPT na základní věci</option>
+                <option value="intermediate">Pokročilý — prompt engineering, API, automatizace</option>
+                <option value="advanced">Expert — stavím AI systémy, agenty, RAG pipelines</option>
+              </select>
+              <span class="err-msg">Vyber prosím úroveň.</span>
+            </div>
+          </div>
+          <div class="form-row" style="margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-label">Jaké nástroje a modely znáš? <span style="color:var(--txt-3);font-weight:400">(klikni co znáš)</span></label>
+              <div class="chips" id="toolChips">
+                <button type="button" class="chip" data-v="chatgpt">ChatGPT</button>
+                <button type="button" class="chip" data-v="claude">Claude</button>
+                <button type="button" class="chip" data-v="gemini">Gemini</button>
+                <button type="button" class="chip" data-v="openai-api">OpenAI API</button>
+                <button type="button" class="chip" data-v="langchain">LangChain</button>
+                <button type="button" class="chip" data-v="n8n">n8n</button>
+                <button type="button" class="chip" data-v="make">Make.com</button>
+                <button type="button" class="chip" data-v="zapier">Zapier</button>
+                <button type="button" class="chip" data-v="cursor">Cursor / Copilot</button>
+                <button type="button" class="chip" data-v="midjourney">Midjourney / DALL-E</button>
+                <button type="button" class="chip" data-v="huggingface">HuggingFace</button>
+                <button type="button" class="chip" data-v="vectors">Vektory / RAG</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="f-aiexp">Popiš svou zkušenost s AI konkrétně <span class="req">*</span></label>
+              <textarea class="form-textarea" id="f-aiexp" name="aiexp" placeholder="Co jsi postavil, co automatizoval, s čím experimentoval — klidně s detaily…" style="min-height:90px" required></textarea>
+              <span class="err-msg">Napiš prosím o své zkušenosti.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ Projekty -->
+        <div class="form-section">
+          <div class="section-label">Projekty</div>
+          <div class="form-row" style="margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-label">Máš za sebou nějaký vlastní projekt?</label>
+              <div class="yn">
+                <button type="button" class="yn-btn" id="yn-yes">Ano</button>
+                <button type="button" class="yn-btn" id="yn-no">Ne / teprve chystám</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-row" id="projectRow" style="display:none">
+            <div class="form-group">
+              <label class="form-label" for="f-project">Stručně popiš projekt</label>
+              <textarea class="form-textarea" id="f-project" name="project" placeholder="Co to bylo, jaký problém řešil, co byl výsledek…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ④ Spolupráce -->
+        <div class="form-section">
+          <div class="section-label">Spolupráce</div>
+          <div class="form-row" style="margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-label" for="f-contrib">Co bys přinesl do Loopcodu? <span class="req">*</span></label>
+              <textarea class="form-textarea" id="f-contrib" name="contrib" placeholder="Technické skills, network, business instinkt, prodej, design, obsah — klidně mix…" required></textarea>
+              <span class="err-msg">Napiš co přineseš.</span>
+            </div>
+          </div>
+          <div class="form-row" style="margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-label" for="f-time">Časová dostupnost</label>
+              <select class="form-select" id="f-time" name="time">
+                <option value="" disabled selected>Kolik času můžeš věnovat…</option>
+                <option value="part">Pár hodin týdně — vedlejší projekt</option>
+                <option value="half">Přibližně půl úvazku</option>
+                <option value="full">Naplno — chci se do toho dát</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="f-why">Proč zrovna tohle a proč teď?</label>
+              <textarea class="form-textarea" id="f-why" name="why" placeholder="Klidně upřímně — co tě přitahuje, co z toho chceš získat…"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="modal-footer">
+        <div class="footer-note">Přihláška trvá ~3 min.<br>Ozvu se každému osobně.</div>
+        <button class="btn-submit" id="submitBtn">
+          Odeslat přihlášku ↗
+        </button>
+      </div>
+    </div><!-- /formContent -->
+
+  </div><!-- /modal -->
+</div><!-- /overlay -->
+
+<script>
+  /* ── Modal open / close ── */
+  const overlay   = document.getElementById('overlay');
+  const openBtn   = document.getElementById('openModal');
+  const closeBtn  = document.getElementById('closeModal');
+  const submitBtn = document.getElementById('submitBtn');
+  const form      = document.getElementById('signupForm');
+  const success   = document.getElementById('successState');
+  const formCont  = document.getElementById('formContent');
+
+  function openModal() {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('f-name').focus(), 320);
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  openBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+  /* ── Tool chips ── */
+  document.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => c.classList.toggle('on'));
+  });
+
+  /* ── Yes / No project ── */
+  const ynYes = document.getElementById('yn-yes');
+  const ynNo  = document.getElementById('yn-no');
+  const pRow  = document.getElementById('projectRow');
+
+  ynYes.addEventListener('click', () => {
+    ynYes.classList.add('on'); ynNo.classList.remove('on');
+    pRow.style.display = 'grid';
+  });
+  ynNo.addEventListener('click', () => {
+    ynNo.classList.add('on'); ynYes.classList.remove('on');
+    pRow.style.display = 'none';
+  });
+
+  /* ── Validation helper ── */
+  function validate(el) {
+    const empty = !el.value.trim();
+    const badEmail = el.type === 'email' && el.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+    const bad = empty || badEmail;
+    el.classList.toggle('err', bad);
+    return !bad;
+  }
+
+  /* Clear error on type */
+  form.querySelectorAll('[required]').forEach(el => {
+    el.addEventListener('input', () => el.classList.remove('err'));
+  });
+
+  /* ── Submit ── */
+  submitBtn.addEventListener('click', () => {
+    const required = [...form.querySelectorAll('[required]')];
+    let ok = true;
+    let firstBad = null;
+
+    required.forEach(el => {
+      if (!validate(el)) {
+        ok = false;
+        if (!firstBad) firstBad = el;
+      }
+    });
+
+    if (!ok) {
+      firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    /* Collect data */
+    const tools = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.v);
+    const data = {
+      name:         document.getElementById('f-name').value.trim(),
+      email:        document.getElementById('f-email').value.trim(),
+      role:         document.getElementById('f-role').value.trim(),
+      link:         document.getElementById('f-link').value.trim(),
+      aiLevel:      document.getElementById('f-level').value,
+      tools,
+      aiExperience: document.getElementById('f-aiexp').value.trim(),
+      hasProject:   ynYes.classList.contains('on') ? 'yes' : ynNo.classList.contains('on') ? 'no' : null,
+      project:      document.getElementById('f-project').value.trim(),
+      contribution: document.getElementById('f-contrib').value.trim(),
+      availability: document.getElementById('f-time').value,
+      motivation:   document.getElementById('f-why').value.trim(),
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Odesílám…';
+
+    fetch('https://formspree.io/f/xaqzbkna', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        formCont.style.display = 'none';
+        success.classList.add('show');
+      })
+      .catch(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Odeslat přihlášku ↗';
+        alert('Nepodařilo se odeslat. Zkus to prosím znovu.');
+      });
+  });
+</script>
+</body>
+</html>

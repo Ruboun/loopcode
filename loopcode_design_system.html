@@ -1,0 +1,198 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Space Grotesk',sans-serif}
+.ds{background:#0a0a0a;color:#f0f0f0;padding:2rem;border-radius:12px;font-family:'Space Grotesk',sans-serif}
+.section{margin-bottom:2.5rem}
+.label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#555;margin-bottom:1rem;font-family:'Space Grotesk',sans-serif}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+
+.swatch{width:56px;height:56px;border-radius:8px;display:flex;flex-direction:column;justify-content:flex-end;padding:6px;cursor:default}
+.swatch span{font-size:10px;font-weight:500}
+
+.type-row{margin-bottom:1rem;border-bottom:0.5px solid #1a1a1a;padding-bottom:1rem}
+.type-row:last-child{border-bottom:none;padding-bottom:0;margin-bottom:0}
+.type-meta{font-size:11px;color:#555;margin-top:2px}
+
+.comp-card{background:#111;border:0.5px solid #222;border-radius:12px;padding:1.25rem;min-width:180px;flex:1}
+.comp-card .title{font-size:13px;color:#888;margin-bottom:12px}
+
+.btn-primary{background:#00FF94;color:#0a0a0a;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.btn-secondary{background:transparent;color:#f0f0f0;border:0.5px solid #333;border-radius:6px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.btn-ghost{background:transparent;color:#555;border:none;border-radius:6px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:500}
+.badge-green{background:#0a2a1a;color:#00FF94;border:0.5px solid #00FF9430}
+.badge-gray{background:#1a1a1a;color:#888;border:0.5px solid #333}
+.badge-amber{background:#2a1a00;color:#EF9F27;border:0.5px solid #EF9F2730}
+
+.input-demo{background:#111;border:0.5px solid #333;border-radius:6px;padding:8px 12px;font-size:13px;color:#f0f0f0;width:100%;font-family:'Space Grotesk',sans-serif;outline:none}
+
+.card-demo{background:#111;border:0.5px solid #1e1e1e;border-radius:12px;padding:1.25rem}
+.card-demo .card-label{font-size:11px;color:#555;margin-bottom:4px}
+.card-demo .card-value{font-size:22px;font-weight:500;color:#f0f0f0}
+.card-demo .card-delta{font-size:12px;color:#00FF94;margin-top:2px}
+
+.logo-demo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;border-radius:6px;background:#00FF94;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:18px;height:18px}
+.logo-text{font-size:18px;font-weight:500;color:#f0f0f0;letter-spacing:-0.02em}
+.logo-text span{color:#00FF94}
+
+.divider{height:0.5px;background:#1a1a1a;margin:2rem 0}
+
+.token-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid #141414;font-size:12px}
+.token-row:last-child{border-bottom:none}
+.token-name{color:#555;font-family:monospace}
+.token-val{color:#f0f0f0}
+.token-preview{width:16px;height:16px;border-radius:3px;margin-left:8px;display:inline-block;vertical-align:middle}
+</style>
+
+<div class="ds">
+  <h2 class="sr-only">Loopcode design system — dark mode, Space Grotesk, startupy</h2>
+
+  <div class="section">
+    <div class="logo-demo" style="margin-bottom:2rem">
+      <div class="logo-icon">
+        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 3C5.686 3 3 5.686 3 9s2.686 6 6 6 6-2.686 6-6" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M12 6l3-3m0 0v3m0-3h-3" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">loop<span>code</span></div>
+    </div>
+    <div class="label">logo concept</div>
+    <p style="font-size:12px;color:#555;line-height:1.6">Smyčka + šipka ven — loop který doručuje výsledek. Zelená je akcent na druhé polovině slova.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="label">barvy</div>
+    <div class="row" style="margin-bottom:16px">
+      <div>
+        <div class="swatch" style="background:#00FF94;width:80px;height:80px"><span style="color:#0a0a0a;font-size:11px">Acid green<br>#00FF94</span></div>
+        <div style="font-size:11px;color:#555;margin-top:4px">Primary</div>
+      </div>
+      <div>
+        <div class="swatch" style="background:#0a0a0a;border:0.5px solid #222;width:80px;height:80px"><span style="color:#555;font-size:11px">Near black<br>#0A0A0A</span></div>
+        <div style="font-size:11px;color:#555;margin-top:4px">Background</div>
+      </div>
+      <div>
+        <div class="swatch" style="background:#111111;border:0.5px solid #222;width:80px;height:80px"><span style="color:#555;font-size:11px">Surface<br>#111111</span></div>
+        <div style="font-size:11px;color:#555;margin-top:4px">Card</div>
+      </div>
+      <div>
+        <div class="swatch" style="background:#f0f0f0;width:80px;height:80px"><span style="color:#0a0a0a;font-size:11px">Off white<br>#F0F0F0</span></div>
+        <div style="font-size:11px;color:#555;margin-top:4px">Text primary</div>
+      </div>
+      <div>
+        <div class="swatch" style="background:#555555;width:80px;height:80px"><span style="color:#f0f0f0;font-size:11px">Mid gray<br>#555555</span></div>
+        <div style="font-size:11px;color:#555;margin-top:4px">Text secondary</div>
+      </div>
+      <div>
+        <div class="swatch" style="background:#EF9F27;width:80px;height:80px"><span style="color:#0a0a0a;font-size:11px">Amber<br>#EF9F27</span></div>
+        <div style="font-size:11px;color:#555;margin-top:4px">Warning / highlight</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="label">typografie — Space Grotesk</div>
+    <div class="type-row">
+      <div style="font-size:32px;font-weight:500;color:#f0f0f0;letter-spacing:-0.03em;line-height:1.1">Automate everything.</div>
+      <div class="type-meta">H1 · 32px · weight 500 · tracking -0.03em</div>
+    </div>
+    <div class="type-row">
+      <div style="font-size:20px;font-weight:500;color:#f0f0f0;letter-spacing:-0.02em">Run your ops on autopilot.</div>
+      <div class="type-meta">H2 · 20px · weight 500 · tracking -0.02em</div>
+    </div>
+    <div class="type-row">
+      <div style="font-size:14px;font-weight:400;color:#888;line-height:1.6">We build AI loops that replace manual work — so your team ships faster without adding headcount.</div>
+      <div class="type-meta">Body · 14px · weight 400 · color #888</div>
+    </div>
+    <div class="type-row">
+      <div style="font-size:11px;font-weight:500;color:#555;letter-spacing:0.1em;text-transform:uppercase">Section label</div>
+      <div class="type-meta">Label · 11px · weight 500 · uppercase · tracking 0.1em</div>
+    </div>
+    <div class="type-row" style="border-bottom:none">
+      <div style="font-size:12px;color:#00FF94;font-family:monospace">const loop = new Loopcode()</div>
+      <div class="type-meta">Code · monospace · 12px · accent green</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="label">komponenty</div>
+    <div class="row">
+      <div class="comp-card">
+        <div class="title">buttons</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn-primary">Start automating ↗</button>
+          <button class="btn-secondary">See how it works</button>
+          <button class="btn-ghost">Learn more</button>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="title">badges</div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+          <span class="badge badge-green"><i class="ti ti-player-play" style="font-size:11px" aria-hidden="true"></i> Running</span>
+          <span class="badge badge-amber"><i class="ti ti-clock" style="font-size:11px" aria-hidden="true"></i> Queued</span>
+          <span class="badge badge-gray"><i class="ti ti-minus" style="font-size:11px" aria-hidden="true"></i> Idle</span>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="title">input</div>
+        <input class="input-demo" placeholder="Paste your webhook URL..." style="margin-bottom:8px"/>
+        <div style="font-size:11px;color:#555">Border #333 · focus ring #00FF9440</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="label">metric cards</div>
+    <div class="row">
+      <div class="card-demo" style="flex:1;min-width:120px">
+        <div class="card-label">Loops running</div>
+        <div class="card-value">142</div>
+        <div class="card-delta">+12 this week</div>
+      </div>
+      <div class="card-demo" style="flex:1;min-width:120px">
+        <div class="card-label">Hours saved</div>
+        <div class="card-value">2,840</div>
+        <div class="card-delta">+340 this month</div>
+      </div>
+      <div class="card-demo" style="flex:1;min-width:120px">
+        <div class="card-label">Error rate</div>
+        <div class="card-value">0.2%</div>
+        <div class="card-delta" style="color:#EF9F27">+0.1% vs last week</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" style="margin-bottom:0">
+    <div class="label">design tokeny</div>
+    <div class="token-row"><span class="token-name">--color-accent</span><span class="token-val">#00FF94 <span class="token-preview" style="background:#00FF94"></span></span></div>
+    <div class="token-row"><span class="token-name">--color-bg</span><span class="token-val">#0A0A0A <span class="token-preview" style="background:#0a0a0a;border:0.5px solid #333"></span></span></div>
+    <div class="token-row"><span class="token-name">--color-surface</span><span class="token-val">#111111 <span class="token-preview" style="background:#111;border:0.5px solid #333"></span></span></div>
+    <div class="token-row"><span class="token-name">--color-border</span><span class="token-val">#222222 <span class="token-preview" style="background:#222"></span></span></div>
+    <div class="token-row"><span class="token-name">--color-text-primary</span><span class="token-val">#F0F0F0</span></div>
+    <div class="token-row"><span class="token-name">--color-text-secondary</span><span class="token-val">#888888</span></div>
+    <div class="token-row"><span class="token-name">--font-primary</span><span class="token-val">Space Grotesk</span></div>
+    <div class="token-row"><span class="token-name">--font-mono</span><span class="token-val">JetBrains Mono</span></div>
+    <div class="token-row"><span class="token-name">--radius-sm</span><span class="token-val">6px</span></div>
+    <div class="token-row"><span class="token-name">--radius-md</span><span class="token-val">12px</span></div>
+    <div class="token-row"><span class="token-name">--radius-lg</span><span class="token-val">16px</span></div>
+    <div class="token-row" style="border-bottom:none"><span class="token-name">--tracking-tight</span><span class="token-val">-0.03em (headings)</span></div>
+  </div>
+</div>
